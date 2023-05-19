@@ -130,7 +130,6 @@ let createNewUser =  (data) => {
                     address: data.address,
                     phoneNumber: data.phoneNumber,
                     gender: data.gender,
-                    image: data.image,
                     roleId: data.roleId
         
                 })
@@ -175,6 +174,7 @@ let UpdateUserData = (data) => {
     return new Promise(async(resolve, reject) => { 
         try {
             if (!data.id) {
+                console.log('check nodejs',data)
                 resolve({
                     errCode: 2,
                     errMessage: "User id is required"
@@ -186,12 +186,12 @@ let UpdateUserData = (data) => {
                 raw: false
             })
             if (user) {
+                user.email = data.email;
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
                 user.phoneNumber = data.phoneNumber;
                 user.gender = data.gender;
-                user.image = data.image;    
                 await user.save();
                 resolve({
                     errCode: 0,
