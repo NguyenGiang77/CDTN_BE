@@ -23,7 +23,7 @@ let HanleUserLogin = (email, password) => {
             if (isExist) { 
                 //user đã tồn tại
                 let user = await db.User.findOne({
-                    attributes:  ['email', 'lastName', 'firstName', 'roleId', 'password'],
+                    attributes:  ['email', 'roleId', 'password', 'firstName', 'lastName'],
                     where: { email: email },
                     raw: true
                 });
@@ -212,11 +212,41 @@ let UpdateUserData = (data) => {
         }
     })
 }
+let getAllCodeService = (typeInput) => { 
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!typeInput)
+            { 
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameter"
+                });
+            }
+            else {
+                let res = {};
+                let allCode = await db.Allcode.findAll({
+                    where: {
+                        type: typeInput
+                    }
+                });
+                res.errCode = 0;
+                res.data = allCode;
+                resolve(res);
+            }
+            
+            
+        } catch (e) { 
+            reject(e);
+        }
+        
+    })
+}
 
 module.exports = {
     HanleUserLogin: HanleUserLogin,
     getAllUsers: getAllUsers,
     createNewUser: createNewUser,
     deleteUser: deleteUser,
-    UpdateUserData: UpdateUserData
+    UpdateUserData: UpdateUserData,
+    getAllCodeService: getAllCodeService,
 }
