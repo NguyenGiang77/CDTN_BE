@@ -2,6 +2,7 @@
 import express  from "express";  
 import homeController from "../controllers/homeController";
 import userController from "../controllers/userController";
+import doctorController from "../controllers/doctorController";
 //là 1 đích danh, 1 object của file wen
 let router = express.Router();
 let initWebRouter = (app) => {
@@ -21,7 +22,8 @@ let initWebRouter = (app) => {
     router.post('/api/create-new-user', userController.HandleCreateNewUser);
     router.put('/api/edit-user', userController.HandleEditUser);
     router.delete('/api/delete-user', userController.HandleDeleteUser);
-    router.get('/api/allcode',userController.getAllCode);
+    router.get('/api/allcode', userController.getAllCode);
+    router.get('/api/top-doctor', doctorController.getTopDoctor);
     return app.use("/", router);
 
 }

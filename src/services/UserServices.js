@@ -175,8 +175,7 @@ let deleteUser = (userId) => {
 let UpdateUserData = (data) => {
     return new Promise(async(resolve, reject) => { 
         try {
-            if (!data.id) {
-                console.log('check nodejs',data)
+            if (!data.id || !data.roleId || !data.positionId || !data.gender) {
                 resolve({
                     errCode: 2,
                     errMessage: "User id is required"
@@ -189,11 +188,16 @@ let UpdateUserData = (data) => {
             })
             if (user) {
                 user.email = data.email;
+                user.password = data.password;
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
                 user.phoneNumber = data.phoneNumber;
                 user.gender = data.gender;
+                user.roleId = data.roleId;
+                user.positionId = data.positionId;
+                
+                user.image = data.image;
                 await user.save();
                 resolve({
                     errCode: 0,
