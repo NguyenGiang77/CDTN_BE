@@ -24,6 +24,11 @@ let initWebRouter = (app) => {
     router.delete('/api/delete-user', userController.HandleDeleteUser);
     router.get('/api/allcode', userController.getAllCode);
     router.get('/api/top-doctor', doctorController.getTopDoctor);
+    router.get('/api/all-doctor', doctorController.getAllDoctor);
+    router.post('/api/save-infor-doctor', doctorController.postInforDoctor);
+    router.get('/api/get-doctor-by-id', doctorController.getDoctorById);
+    router.post('/api/bulk-create-schedule', doctorController.bulkCreateSchedule);  
+
     return app.use("/", router);
 
 }
