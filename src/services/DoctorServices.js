@@ -154,15 +154,18 @@ let bulkCreateSchedule =  (data) => {
                     raw: true
                 })
                 // convert date
-                if (existingData && existingData.length > 0) {
-                    existingData = existingData.map(item => {
-                        item.date = new Date(item.date).getTime();
-                        return item;
-                    })
-                }
+                // if (existingData && existingData.length > 0) {
+                //     existingData = existingData.map(item => {
+                //         item.date = new Date(item.date).getTime();
+                //         return item;
+                //     })
+                // }
+
                 //compare different
+                // a = '5'
+            //    b = +a => b = 5 tức là khi thêm dấu + vào trước biến thì biến STRING = > SỐ
                 let toCreate = _.differenceWith(schedule, existingData, (a, b) => {
-                    return a.timeType === b.timeType && a.date === b.date;
+                    return a.timeType === b.timeType && +a.date === +b.date;
                 });
                 //create data
                 if (toCreate && toCreate.length > 0) {
@@ -181,10 +184,44 @@ let bulkCreateSchedule =  (data) => {
         }
     })
 }
+let getSchDoctorByDate = (doctorId, date) => { 
+    return new Promise( async(resolve, reject) => { 
+        try {
+            if (!doctorId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameter'
+                })
+                
+            }
+            else {
+                let dataSch = await db.Schecdule.findAll({
+                    where: {
+                        doctorId: doctorId, // KeyTrongdb: Keytruyenvao
+                        date: date
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'timeTypeData', attributes: [ 'valueEN', 'valueVN'] }
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                if (!dataSch) dataSch = [];
+                resolve({
+                    errCode: 0,
+                    data: dataSch
+                })
+            }
+        } catch (e) { 
+            resolve(e);
+        }
+    })
+}
 module.exports = {
     getTopDoctor: getTopDoctor,
     getAllDoctor: getAllDoctor,
     postInforDoctor: postInforDoctor,
     getDoctorById: getDoctorById,
-    bulkCreateSchedule: bulkCreateSchedule
+    bulkCreateSchedule: bulkCreateSchedule,
+    getSchDoctorByDate:getSchDoctorByDate,
 }

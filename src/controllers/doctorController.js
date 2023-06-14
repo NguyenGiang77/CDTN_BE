@@ -65,10 +65,23 @@ let bulkCreateSchedule = async (req, res) => {
         })
     }
 }
+let getSchDoctorByDate = async (req, res) => { 
+    try {
+        let infor = await DoctorServices.getSchDoctorByDate(req.query.doctorId, req.query.date); // query để lấy ra dữ liệu có tham số truyền vào (với Get với Post dùng req.body)
+        return res.status(200).json(infor);
+    } catch (e) { 
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from the server"
+        })
+    }    
+}
 module.exports = {
     getTopDoctor: getTopDoctor,
     getAllDoctor: getAllDoctor,
     postInforDoctor: postInforDoctor,
     getDoctorById: getDoctorById,
-    bulkCreateSchedule:bulkCreateSchedule
+    bulkCreateSchedule: bulkCreateSchedule,
+    getSchDoctorByDate:getSchDoctorByDate
 }

@@ -10,13 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
+        Schecdule.belongsTo(models.Allcode, { foreignKey: 'timeType', targetKey: 'keyMap', as: 'timeTypeData' })
       // define association here
     }
   }
   Schecdule.init({
     currentNumber: DataTypes.INTEGER,
     maxNumber: DataTypes.INTEGER,
-    date: DataTypes.DATE,
+    date: DataTypes.STRING,
     timeType: DataTypes.STRING,
     doctorId: DataTypes.INTEGER
   }, {
