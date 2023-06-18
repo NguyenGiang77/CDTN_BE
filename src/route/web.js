@@ -3,6 +3,7 @@ import express  from "express";
 import homeController from "../controllers/homeController";
 import userController from "../controllers/userController";
 import doctorController from "../controllers/doctorController";
+import patientController from "../controllers/patientController";
 //là 1 đích danh, 1 object của file wen
 let router = express.Router();
 let initWebRouter = (app) => {
@@ -29,6 +30,9 @@ let initWebRouter = (app) => {
     router.get('/api/get-doctor-by-id', doctorController.getDoctorById);
     router.post('/api/bulk-create-schedule', doctorController.bulkCreateSchedule);  
     router.get('/api/get-schedule-doctor-by-date', doctorController.getSchDoctorByDate);
+    router.get('/api/get-extra-infor-doctor-by-id', doctorController.getExtraInforDoctorById);
+    router.get('/api/get-profile-doctor-by-id', doctorController.getProfileDoctorById);
+    router.post('/api/patient-book-appointment', patientController.postBookingSchedule);
 
     return app.use("/", router);
 
