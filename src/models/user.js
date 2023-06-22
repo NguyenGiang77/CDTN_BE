@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
       User.belongsTo(models.Allcode, { foreignKey: 'roleId', targetKey: 'keyMap', as: 'roleData' })
       User.hasOne(models.Markdown, { foreignKey: 'doctorId' })
       User.hasOne(models.InforDoctor, { foreignKey: 'doctorId' })
+      User.hasMany(models.Schecdule, { foreignKey: 'doctorId', as: 'doctorData' })
+      User.hasMany(models.Booking, { foreignKey: 'patientId', as: 'patientData' })
 
       // define association here
     }

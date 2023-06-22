@@ -49,21 +49,38 @@ let getAllDoctor = () => {
         }
     })
 }
+let checkFailed = (inputData) => { 
+    let arr = ['doctorId', "contentHTML", 'contentMarkdown',
+        'action', 'selectedPrice', 'selectedPayment', 'selectedProvince',
+        'nameClinic', 'addressClinic', 'note'
+    ]
+    let isValid = true
+    let elemnet = ''
+    for (let i = 0; i < arr.length; i++){
+        if (!inputData[arr[i]])
+        {
+            isValid = false
+            elemnet = arr[i]
+            break
+        }
+        
+    }
+    return {
+        isValid: isValid,
+        elemnet: elemnet
+    }
+}
 let postInforDoctor = (inputData) => { 
     return new Promise(async(resolve, reject) => {
         try {
-            if (
-                !inputData.doctorId || !inputData.contentHTML || !inputData.contentMarkdown
-                || !inputData.action || !inputData.selectedPrice
-                || !inputData.selectedPayment || !inputData.selectedProvince
-                || !inputData.nameClinic || !inputData.addressClinic || !inputData.note
-            )
-            {
+            let check = checkFailed(inputData);
+            if (check.isValid === false) { 
                 resolve({
                     errCode: 1,
                     errMessage: 'Missing parameter '
                 })
             }
+            
             else {
                 if (inputData.action === "CREATE")
                 {
@@ -109,6 +126,8 @@ let postInforDoctor = (inputData) => {
                     doctorInfo.nameClinic= inputData.nameClinic;
                     doctorInfo.addressClinic = inputData.addressClinic;
                     doctorInfo.note = inputData.note;
+                    doctorInfo.specialty = inputData.specialty;
+                    doctorInfo.clinicId = inputData.clinicId;
                     await doctorInfo.save();
                 }
                 else
@@ -121,7 +140,9 @@ let postInforDoctor = (inputData) => {
                         paymentId: inputData.selectedPayment,
                         nameClinic: inputData.nameClinic,
                         addressClinic: inputData.addressClinic,
-                        note: inputData.note
+                        note: inputData.note,
+                        specialtyId: inputData.specialtyId,
+                        clinicId: inputData.clinicId
                     })
                 }
                 resolve({
@@ -221,15 +242,7 @@ let bulkCreateSchedule =  (data) => {
                     attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
                     raw: true
                 })
-                // convert date
-                // if (existingData && existingData.length > 0) {
-                //     existingData = existingData.map(item => {
-                //         item.date = new Date(item.date).getTime();
-                //         return item;
-                //     })
-                // }
-
-                //compare different
+               
                 // a = '5'
             //    b = +a => b = 5 tức là khi thêm dấu + vào trước biến thì biến STRING = > SỐ
                 let toCreate = _.differenceWith(schedule, existingData, (a, b) => {
@@ -269,7 +282,8 @@ let getSchDoctorByDate = (doctorId, date) => {
                         date: date
                     },
                     include: [
-                        { model: db.Allcode, as: 'timeTypeData', attributes: [ 'valueEN', 'valueVN'] }
+                        { model: db.Allcode, as: 'timeTypeData', attributes: ['valueEN', 'valueVN'] },
+                        { model: db.User, as: 'doctorData', attributes: ['firstName', 'lastName'] },
                     ],
                     raw: false,
                     nest: true
