@@ -1,5 +1,10 @@
 import db from "../models/index";
+import _, { includes } from 'lodash';
+
 require('dotenv').config();
+
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
+
 let checkName = (InforCategoryName) => { 
     return new Promise(async(resolve, reject) => { 
         try {
@@ -176,6 +181,7 @@ let getAllInforCategory = () => {
         }
     })
 }
+
 let getDetailInforCategoryById = (inputId) => { 
     return new Promise(async(resolve, reject) => { 
         try {
@@ -194,9 +200,9 @@ let getDetailInforCategoryById = (inputId) => {
                     attributes: 
                         ['id','inforCategoryHTML', 'inforCategoryMarkdown','description', 'name','image'],
                     include: [
-                            // { model: db.Clinic, as: 'clinicInforCategoryData', attributes: [ 'name','address'] },
+                            { model: db.Clinic, as: 'clinicInforCategoryData', attributes: [ 'name','address'] },
                             { model: db.Allcode, as: 'paymentInforCategoryData', attributes: [ 'valueEN', 'valueVN'] },
-                            // { model: db.Category, as: 'categoryInforCategoryData', attributes:[ 'name'] },
+                            { model: db.Category, as: 'categoryInforCategoryData', attributes:[ 'name'] },
                             { model: db.Allcode, as: 'priceInforCategoryData', attributes: [ 'valueEN', 'valueVN'] },
                             { model: db.Allcode, as: 'provinceInforCategoryData', attributes: [ 'valueEN', 'valueVN'] },
 
@@ -221,46 +227,7 @@ let getDetailInforCategoryById = (inputId) => {
         }
     })
 }
-let getExtraInforCategoryById = (inforCategoryId) => { 
-    return new Promise(async(resolve, reject) => { 
-        try {
-            if (!inforCategoryId) {
-                resolve({
-                    errCode: 1,
-                    errMessage: 'Missing required parameter'
-                })
-                
-            }
-            else {
-                let data = await db.InforCategory.findOne({
-                    where: {
-                        id: inforCategoryId, // KeyTrongdb: Keytruyenvao
-                        
-                    },
-                    attributes: {
-                        exclude: ['name','id'], 
-                    },
-                    include: [
-                        { model: db.Clinic, as: 'clinicInforCategoryData', attributes: [ 'name','address'] },
-                        { model: db.Allcode, as: 'paymentInforCategoryData', attributes: [ 'valueEN', 'valueVN'] },
-                        // { model: db.Category, as: 'categoryInforCategoryData', attributes:[ 'name'] },
-                        { model: db.Allcode, as: 'priceInforCategoryData', attributes: [ 'valueEN', 'valueVN'] },
-                        { model: db.Allcode, as: 'provinceInforCategoryData', attributes: [ 'valueEN', 'valueVN'] },
-                    ],
-                    raw: false,
-                    nest: true
-                })
-                if (!data) data = {};
-                resolve({
-                    errCode: 0,
-                    data: data
-                })
-            }
-        } catch (e) { 
-            resolve(e);
-        }    
-    })
-}
+
 let bulkCreateScheduleCategory =  (data) => {
     return new Promise(async(resolve, reject) => { 
         try {
@@ -281,7 +248,7 @@ let bulkCreateScheduleCategory =  (data) => {
                 //get all existing data
                 let existingData = await db.SchecduleCategory.findAll({
                     where: { inforCategoryId: data.inforCategoryId, date: data.formatedDate },
-                    attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
+                    attributes: ['timeType', 'date', 'inforCategoryId', 'maxNumber'],
                     raw: true
                 })
                
@@ -292,7 +259,7 @@ let bulkCreateScheduleCategory =  (data) => {
                 });
                 //create data
                 if (toCreate && toCreate.length > 0) {
-                    await db.Schecdule.bulkCreate(toCreate);
+                    await db.SchecduleCategory.bulkCreate(toCreate);
 
                  }
                  resolve({
@@ -307,6 +274,89 @@ let bulkCreateScheduleCategory =  (data) => {
         }
     })
 }
+let getSchCategoryByDate = (inforCategoryId, date) => { 
+    return new Promise( async(resolve, reject) => { 
+        try {
+            if (!inforCategoryId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameter'
+                })
+                
+            }
+            else {
+                let dataSch = await db.SchecduleCategory.findAll({
+                    where: {
+                        inforCategoryId: inforCategoryId, // KeyTrongdb: Keytruyenvao
+                        date: date
+                    },
+                    include: [
+                        { model: db.Allcode, as: 'timeScheduleCateData', attributes: ['valueEN', 'valueVN'] },
+                        { model: db.InforCategory, as: 'schecduleInforCategoryData', attributes: ['name'] },
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                if (!dataSch) dataSch = [];
+                resolve({
+                    errCode: 0,
+                    data: dataSch
+                })
+            }
+        } catch (e) { 
+            resolve(e);
+        }
+    })
+}
+
+
+let getlisPatientForCategory = (inforCategoryId,date) => { 
+    return new Promise( async(resolve, reject) => { 
+        try {
+            if (!inforCategoryId || !date) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameter'
+                })
+                
+            }
+            else {
+                let data = await db.BookingCategory.findAll({
+                    where: {
+                        statusId: 'S2',
+                        inforCategoryId: inforCategoryId,
+                        date: date
+                        
+                        
+                    },
+                    include: [
+                        { model: db.User, as: 'patientbookingCategoryData', 
+                            attributes: ['email', 'firstName', 'address', 'gender', 'phoneNumber'] ,
+                            include: [
+                                {
+                                    model: db.Allcode, as: 'genderData', attributes: ['valueEN','valueVN']
+                                }
+                            ]
+                        },
+                        {model: db.Allcode, as :'timeTypeInforCategoryData',
+                            attributes: ['valueEN','valueVN']
+                    }
+                        
+                    ],
+                    raw: false,
+                    nest: true
+                })
+                if (!data) data = [];
+                resolve({
+                    errCode: 0,
+                    data
+                })
+            }
+        } catch (e) { 
+            reject(e);
+        }
+    })
+}
 module.exports = {
     checkName: checkName,
     getAllInforCategories: getAllInforCategories,
@@ -315,6 +365,7 @@ module.exports = {
     UpdateInforCategoryData:UpdateInforCategoryData,
     getAllInforCategory: getAllInforCategory,
     getDetailInforCategoryById: getDetailInforCategoryById,
-    getExtraInforCategoryById: getExtraInforCategoryById,
-    bulkCreateScheduleCategory:bulkCreateScheduleCategory
+    bulkCreateScheduleCategory:bulkCreateScheduleCategory,
+    getlisPatientForCategory: getlisPatientForCategory,
+    getSchCategoryByDate: getSchCategoryByDate,
 }

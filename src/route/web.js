@@ -42,8 +42,9 @@ let initWebRouter = (app) => {
     router.post('/api/send-remedy', doctorController.sendRemedy);
 
     router.post('/api/patient-book-appointment', patientController.postBookingSchedule);
+    router.post('/api/patient-book-category-appointment', patientController.postBookingCategorySchedule);
     router.post('/api/verify-book-appointment', patientController.postVerifyBook);
-
+    router.post('/api/verify-book-category-appointment', patientController.postVerifyBookCategory);
 
     //chuyên khoa
     router.post('/api/create-new-specialty', specialtyController.createSpecialty);
@@ -79,7 +80,11 @@ let initWebRouter = (app) => {
     router.put('/api/edit-inforCategory', inforCategoryController.HandleEditInforCategory);
     router.delete('/api/delete-inforCategory', inforCategoryController.HandleDeleteInforCategory);
     router.get('/api/get-extra-infor-category-by-id', inforCategoryController.getExtraInforCategortById);
+    router.post('/api/bulk-create-schedule-category', inforCategoryController.bulkCreateScheduleCategory);  
+    router.get('/api/get-schedule-category-by-date', inforCategoryController.getSchCategoryByDate);
+    router.get('/api/get-list-patient-for-category', inforCategoryController.getlisPatientForCategory)
 
+    
     // Bảng allcode
     router.post('/api/create-new-allcode', allcodeController.HandleCreateNewAllcode);
     router.get('/api/get-all-allcodes', allcodeController.HandleGetAllAllcode);

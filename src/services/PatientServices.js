@@ -9,6 +9,12 @@ let buildUrlEmail = (doctorId,token) => {
     let result = `${process.env.URL_REACT}/verify-booking?token=${token}&doctorId=${doctorId}`// lấy ra tham số trực tiếp k cần nối chuỗi
     return result;
 }
+let buildUrlEmailCategory = (inforCategoryId,token) => { 
+    // let id = uuidv4();
+    let result = `${process.env.URL_REACT}/verify-booking-category?token=${token}&inforCategoryId=${inforCategoryId}`// lấy ra tham số trực tiếp k cần nối chuỗi
+    return result;
+}
+
 
 let postBookingSchedule = (data) => { 
     return new Promise(async(resolve, reject) => { 
@@ -78,6 +84,75 @@ let postBookingSchedule = (data) => {
         }
     })
 }
+let postBookingCategorySchedule = (data) => { 
+    return new Promise(async(resolve, reject) => { 
+        try {
+            if (!data.email || !data.inforCategoryId 
+                
+            ) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameter"
+                });
+            }
+            else {
+                let token = uuidv4();
+                
+                await EmailServices.sendSimpleEmailCategory({
+                    reciverEmail: data.email,
+                    patientName: data.Name,
+                    time: data.timeString,
+                    inforCategoryName: data.inforCategoryName,
+                    language: data.language,
+                    redirectLink: buildUrlEmailCategory(data.inforCategoryId,token),
+                    
+                })
+                let user = await db.User.findOrCreate({
+                    where: {
+                        email: data.email
+                    },
+                    defaults: {
+                        email: data.email,
+                        firstName: data.Name,
+                        address: data.address,
+                        gender: data.selectedGenders,
+                        phoneNumber: data.phoneNumber,
+                        roleId: "R3"
+                    }
+                    // raw:true// = true nếu tạo mới, = false là update
+                    
+                });
+                if(user && user[0])
+                    {
+                    await db.BookingCategory.findOrCreate({
+                        where: {
+                            patientId: user[0].id,
+                        },
+                        defaults: {
+                            statusId: "S1",
+                            inforCategoryId: data.inforCategoryId,
+                            patientId: user[0].id,
+                            date: data.date,
+                            timeType: data.timeType,
+                            token: token
+                        }
+                            
+                    })
+                    }
+
+                resolve({
+                    
+                    errCode: 0,
+                    errMessage: "Save infor patient success"
+                })
+            }
+            
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 let postVerifyBook = (data) => { 
     return new Promise(async(resolve, reject) => {
         try {
@@ -122,7 +197,53 @@ let postVerifyBook = (data) => {
         }
     })
 }
+let postVerifyBookCategory = (data) => { 
+    return new Promise(async(resolve, reject) => {
+        try {
+            if (!data.token || !data.inforCategoryId
+                
+            ) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing required parameter"
+                });
+            }
+            else {
+                let appointment = await db.BookingCategory.findOne({
+                    where: {
+                        inforCategoryId: data.inforCategoryId,
+                        token: data.token,
+                        statusId: "S1"
+                    },
+                    raw: false
+                })
+                if (appointment)
+                {
+                    appointment.statusId = "S2";
+                    await appointment.save(); 
+                    
+                    resolve({
+                        errCode: 0,
+                        errMessage: "Update the appointment succeed!"
+                    })
+                }
+                else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: "Appointment has been activated or does not exist"
+                    })
+                }
+            }
+            
+            
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
 module.exports = {
     postBookingSchedule: postBookingSchedule,
-    postVerifyBook: postVerifyBook
+    postVerifyBook: postVerifyBook,
+    postVerifyBookCategory: postVerifyBookCategory,
+    postBookingCategorySchedule
 }

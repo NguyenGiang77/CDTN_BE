@@ -18,6 +18,23 @@ let sendSimpleEmail = async(dataSend) => {
         html:getBodyHTMLEmail(dataSend)
     })
 }
+let sendSimpleEmailCategory = async(dataSend) => { 
+    let transporter  = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: process.env.EMAIL_APP_CATEGORY,
+            pass: process.env.EMAIL_APP_PASSWORD_CATEGORY
+        }
+    });
+    let info = await transporter.sendMail({
+        from: '"YourHeart" <YourHeart@gmail.com>', // sender address
+        to: dataSend.reciverEmail, // list of receivers
+        subject: "Thông tin đặt lịch khám bệnh", // Subject line
+        html:getBodyHTMLEmailCategory(dataSend)
+    })
+}
 let getBodyHTMLEmail = (dataSend) => { 
     let result = ''
     if (dataSend.language === 'vi')
@@ -57,6 +74,45 @@ let getBodyHTMLEmail = (dataSend) => {
     }
     return result;
 }
+let getBodyHTMLEmailCategory = (dataSend) => { 
+    let result = ''
+    if (dataSend.language === 'vi')
+    {
+        result =
+             `
+        <h3>Xin chào anh (chị) ${dataSend.patientName} </h3>
+        <p>Bạn nhận được email này vì đã đặt lịch khám bệnh online trên website YourHeart</p>
+        <p>Thông tin đặt lịch khám bệnh của bạn: </p>
+        <div><b>Thời gian: ${dataSend.time}</b></div>
+        <div><b>Gói khám bệnh: ${dataSend.inforCategoryName}</b></div>
+        <p>Nếu các thông tin trên chính xác, vui lòng click vào đường link bên dưới
+            để xác nhận và hoàn tất thủ tục đặt lịch khám bệnh của bạn. 
+        </p>
+        <div> 
+            <a href = ${dataSend.redirectLink} target="_blank">Click here</a>
+        </div>
+        <div><i>YourHeart cảm ơn quý khách</i></div>
+        `
+    }
+    if (dataSend.language === 'en')
+    {
+        result =
+             `
+        <h3>Dear Mr (Miss) ${dataSend.patientName} </h3>
+        <p>You received this email because you booked an online medical appointment on website YourHeart</p>
+        <p>Your medical appointment booking information: </p>
+        <div><b>Time: ${dataSend.time}</b></div>
+        <div><b>Category: ${dataSend.inforCategoryName}</b></div>
+        <p>If the above information is correct, please click on the link below to confirm and complete your appointment.
+        </p>
+        <div> 
+            <a href = ${dataSend.redirectLink} target="_blank">Click here</a>
+        </div>
+        <div><i>YourHeart thank you!</i></div>
+        `
+    }
+    return result;
+}
 let sendAttachment= async(dataSend) => { 
     let transporter  = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -83,6 +139,7 @@ let sendAttachment= async(dataSend) => {
     })
 
 }
+
 let getBodyAttachment = (dataSend) => { 
     let result = ''
     if (dataSend.language === 'vi')
@@ -112,7 +169,8 @@ let getBodyAttachment = (dataSend) => {
     return result;
 
 }
+
 module.exports = {
     sendSimpleEmail: sendSimpleEmail,
-    sendAttachment:sendAttachment
+    sendAttachment:sendAttachment, sendSimpleEmailCategory
 }    

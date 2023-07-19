@@ -11,6 +11,19 @@ let getAllInforCategory = async (req, res) => {
         })
     }
 }
+let AllInforCategory = async (req, res) => { 
+    try {
+        let infor = await InforCategoryServices.AllInforCategory();
+        return res.status(200).json(infor);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from the server'
+        })
+    }
+}
+
 let getDetailInforCategoryById = async (req, res) => { 
     try {
         let infor = await InforCategoryServices.getDetailInforCategoryById(req.query.id);
@@ -80,6 +93,44 @@ let HandleDeleteInforCategory = async(req, res) => {
     let message = await InforCategoryServices.deleteInforCategory(req.body.id);
     return res.status(200).json(message);
 }
+let getSchCategoryByDate = async (req, res) => { 
+    try {
+        let infor = await InforCategoryServices.getSchCategoryByDate(req.query.inforCategoryId, req.query.date); // query để lấy ra dữ liệu có tham số truyền vào (với Get với Post dùng req.body)
+        return res.status(200).json(infor);
+    } catch (e) { 
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from the server"
+        })
+    }    
+}
+let bulkCreateScheduleCategory = async (req, res) => {
+    try {
+        let infor = await InforCategoryServices.bulkCreateScheduleCategory(req.body);
+        return res.status(200).json(infor);
+    } catch (e) { 
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from the server"
+        })
+    }
+}
+
+  let getlisPatientForCategory = async (req, res) => { 
+     try {
+         let infor = await InforCategoryServices.getlisPatientForCategory(req.query.inforCategoryId,req.query.date); // query để lấy ra dữ liệu có tham số truyền vào (với Get với Post dùng req.body)
+         return res.status(200).json(infor);
+     } catch (e) { 
+         console.log(e);
+         return res.status(200).json({
+             errCode: -1,
+             errMessage: "Error from the server"
+         })
+     }    
+ }
+
 module.exports = 
 {
 
@@ -89,5 +140,9 @@ module.exports =
     HandleCreateNewInforCategory:HandleCreateNewInforCategory,
     HandleEditInforCategory: HandleEditInforCategory,
     HandleDeleteInforCategory:HandleDeleteInforCategory,
-    getExtraInforCategortById:getExtraInforCategortById
+    getExtraInforCategortById:getExtraInforCategortById,
+    bulkCreateScheduleCategory: bulkCreateScheduleCategory,
+    getSchCategoryByDate: getSchCategoryByDate,
+    getlisPatientForCategory: getlisPatientForCategory,
+    AllInforCategory: AllInforCategory
 }
