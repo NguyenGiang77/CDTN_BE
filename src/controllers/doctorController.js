@@ -2,7 +2,7 @@ import DoctorServices from "../services/DoctorServices"
 
 let getTopDoctor = async (req, res) => { 
     let limit = req.query.limit;
-    if (!limit) limit = 15;
+    if (!limit) limit = 8;
     try {
         let response = await DoctorServices.getTopDoctor(+limit);
         return res.status(200).json(response);
@@ -18,6 +18,20 @@ let getTopDoctor = async (req, res) => {
 let getAllDoctor = async (req, res) => {
     try {
         let doctors = await DoctorServices.getAllDoctor();
+        console.log(doctors);
+        return res.status(200).json(doctors);
+    } catch (e) {
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: 'Error from the server'
+        })
+    }
+}
+
+let getAllInforDoctor = async (req, res) => {
+    try {
+        let doctors = await DoctorServices.getAllInforDoctor();
         console.log(doctors);
         return res.status(200).json(doctors);
     } catch (e) {
@@ -136,5 +150,5 @@ module.exports = {
     getExtraInforDoctorById: getExtraInforDoctorById,
     getProfileDoctorById: getProfileDoctorById,
     getlisPatientForDoctor: getlisPatientForDoctor,
-    sendRemedy: sendRemedy
+    sendRemedy: sendRemedy, getAllInforDoctor
 }

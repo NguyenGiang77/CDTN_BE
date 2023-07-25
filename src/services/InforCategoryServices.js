@@ -357,6 +357,46 @@ let getlisPatientForCategory = (inforCategoryId,date) => {
         }
     })
 }
+let getAllInforDoctor = (limit) => {
+    return new Promise( async(resolve, reject) => { 
+        try {
+            let users = await db.User.findAll({
+                where: {roleId: 'R2'},
+                order: [['createdAt', 'DESC']],
+                attributes: {
+                    exclude: ['password']
+                },
+                include: [
+                    { model: db.Allcode, as: 'positionData', attributes: [ 'valueEN', 'valueVN'] },
+                    { model: db.Allcode, as: 'genderData', attributes: ['valueEN', 'valueVN'] },
+                    { model: db.Allcode, as: 'roleData', attributes: ['valueEN', 'valueVN'] },
+                    {
+                        model: db.InforDoctor,
+                        attributes: [
+                            
+                        ],
+                        include: [
+                            {model: db.Specialty, as: 'specialtyData', attributes: ['name']}
+                        ]
+                    }
+                ],
+                raw: true,
+                nest: true,
+            })
+            if (users && users.image) {
+                users.image= new Buffer(users.image, 'base64').toString('binary');
+                
+            }
+            if (!users) users = { };
+            resolve({
+                errCode: 0,
+                data: users
+            })
+        } catch (e) { 
+            reject(e);
+        }
+    })
+}
 module.exports = {
     checkName: checkName,
     getAllInforCategories: getAllInforCategories,

@@ -70,6 +70,46 @@ let getAllDoctor = () => {
         }
     })
 }
+let getAllInforDoctor = (limit) => {
+    return new Promise( async(resolve, reject) => { 
+        try {
+            let users = await db.User.findAll({
+                where: {roleId: 'R2'},
+                order: [['createdAt', 'DESC']],
+                attributes: {
+                    exclude: ['password']
+                },
+                include: [
+                    { model: db.Allcode, as: 'positionData', attributes: [ 'valueEN', 'valueVN'] },
+                    { model: db.Allcode, as: 'genderData', attributes: ['valueEN', 'valueVN'] },
+                    { model: db.Allcode, as: 'roleData', attributes: ['valueEN', 'valueVN'] },
+                    {
+                        model: db.InforDoctor,
+                        attributes: [
+                            
+                        ],
+                        include: [
+                            {model: db.Specialty, as: 'specialtyData', attributes: ['name']}
+                        ]
+                    }
+                ],
+                raw: true,
+                nest: true,
+            })
+            if (users && users.image) {
+                users.image= new Buffer(users.image, 'base64').toString('binary');
+                
+            }
+            if (!users) users = { };
+            resolve({
+                errCode: 0,
+                data: users
+            })
+        } catch (e) { 
+            reject(e);
+        }
+    })
+}
 let checkFailed = (inputData) => { 
     let arr = ['doctorId', "contentHTML", 'contentMarkdown', "description",
         'action', 'selectedPrice', 'selectedPayment', 'selectedProvince',
@@ -250,6 +290,7 @@ let bulkCreateSchedule =  (data) => {
                 if (schedule && schedule.length > 0) { 
                     schedule = schedule.map(item => {
                         item.maxNumber = MAX_NUMBER_SCHEDULE;
+                        
                         return item;
                     })
                 }
@@ -510,5 +551,5 @@ module.exports = {
     getExtraInforDoctorById: getExtraInforDoctorById,
     getProfileDoctorById: getProfileDoctorById,
     getlisPatientForDoctor: getlisPatientForDoctor,
-    sendRemedy:sendRemedy
+    sendRemedy:sendRemedy, getAllInforDoctor
 }

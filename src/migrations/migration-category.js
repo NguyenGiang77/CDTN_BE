@@ -19,6 +19,9 @@ module.exports = {
       categoryMarkown: {
         type: Sequelize.TEXT('long')
       },
+      image: {
+        type: Sequelize.BLOB('long')
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

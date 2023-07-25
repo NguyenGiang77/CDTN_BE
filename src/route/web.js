@@ -30,10 +30,17 @@ let initWebRouter = (app) => {
     router.put('/api/edit-user', userController.HandleEditUser);
     router.delete('/api/delete-user', userController.HandleDeleteUser);
     router.get('/api/allcode', userController.getAllCode);
+
+    //bác sĩ
     router.get('/api/top-doctor', doctorController.getTopDoctor);
     router.get('/api/all-doctor', doctorController.getAllDoctor);
     router.post('/api/save-infor-doctor', doctorController.postInforDoctor);
     router.get('/api/get-doctor-by-id', doctorController.getDoctorById);
+    router.get('/api/all-infor-doctor', doctorController.getAllInforDoctor);
+
+    
+
+    //lịch khám
     router.post('/api/bulk-create-schedule', doctorController.bulkCreateSchedule);  
     router.get('/api/get-schedule-doctor-by-date', doctorController.getSchDoctorByDate);
     router.get('/api/get-extra-infor-doctor-by-id', doctorController.getExtraInforDoctorById);

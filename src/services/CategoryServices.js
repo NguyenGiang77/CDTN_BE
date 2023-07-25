@@ -29,7 +29,7 @@ let getAllCategories = (categoryId) => {
                 
                 categories = await db.Category.findAll({
                     attributes: 
-                        ['id','categoryMarkown', 'categoryHTML', 'name'],
+                        ['id','categoryMarkown', 'categoryHTML', 'name','image'],
                 })
 
             }
@@ -38,7 +38,7 @@ let getAllCategories = (categoryId) => {
                     
                     where: {id: categoryId},
                     attributes: 
-                        ['id','categoryMarkown', 'categoryHTML', 'name'],
+                        ['id','categoryMarkown', 'categoryHTML', 'name','image'],
                 })
             }
             resolve(categories)
@@ -64,7 +64,8 @@ let createNewCategory = (data) => {
                 await db.Category.create({
                     name: data.name,
                     categoryHTML: data.categoryHTML,
-                    categoryMarkown: data.categoryMarkown
+                    categoryMarkown: data.categoryMarkown,
+                    image: data.image
                 })
                  resolve({
                     errCode: 0,
@@ -82,6 +83,12 @@ let getAllCategory = () => {
             let infor = await db.Category.findAll({
                
             })
+            if (infor && infor.length > 0) { 
+                infor.map(item => {
+                    item.image = new Buffer(item.image, 'base64').toString('binary');
+                    return item
+                })
+            }
             resolve({
                 errCode: 0,
                 data: infor
@@ -128,7 +135,8 @@ let UpdateCategoryData = (data) => {
                 raw: false
             })
             if (category) {
-                category.id = data.id
+                category.id = data.id;
+                category.image = data.image;
                 category.name = data.name;
                 category.categoryHTML = data.categoryHTML;
                 category.categoryMarkown = data.categoryMarkown;
@@ -173,7 +181,7 @@ let getDetailCategoryById = (inputId) => {
                         id: inputId
                     },
                     attributes: 
-                    ['categoryMarkown', 'categoryHTML', 'name']
+                    ['categoryMarkown', 'categoryHTML', 'name','image']
 
                 })
                 if (data)
@@ -185,6 +193,10 @@ let getDetailCategoryById = (inputId) => {
                         
                         })
                     data.categoryInforCategoryData = categoryInforCategoryData
+                }
+                if (data && data.image) {
+                    data.image= new Buffer(data.image, 'base64').toString('binary');
+                    
                 }
                 else data = {}
                 resolve({

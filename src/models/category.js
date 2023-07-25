@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     categoryHTML: DataTypes.TEXT('long'),
     categoryMarkown: DataTypes.TEXT('long'),
+    image: DataTypes.BLOB('long')
   }, {
     sequelize,
     modelName: 'Category',
