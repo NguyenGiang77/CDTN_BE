@@ -37,6 +37,7 @@ let initWebRouter = (app) => {
     router.post('/api/save-infor-doctor', doctorController.postInforDoctor);
     router.get('/api/get-doctor-by-id', doctorController.getDoctorById);
     router.get('/api/all-infor-doctor', doctorController.getAllInforDoctor);
+    router.get('/api/search-doctor', doctorController.SearchDoctor);
 
     
 

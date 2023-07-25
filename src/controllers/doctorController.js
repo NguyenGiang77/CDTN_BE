@@ -28,6 +28,19 @@ let getAllDoctor = async (req, res) => {
         })
     }
 }
+let SearchDoctor = async (req, res) => {
+    try {
+        let infor = await DoctorServices.getDoctorById(req.query.keyword);
+        return res.status(200).json(infor);
+    } catch (e) { 
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from the server"
+        })
+    }
+}
+
 
 let getAllInforDoctor = async (req, res) => {
     try {
@@ -150,5 +163,5 @@ module.exports = {
     getExtraInforDoctorById: getExtraInforDoctorById,
     getProfileDoctorById: getProfileDoctorById,
     getlisPatientForDoctor: getlisPatientForDoctor,
-    sendRemedy: sendRemedy, getAllInforDoctor
+    sendRemedy: sendRemedy, getAllInforDoctor,SearchDoctor
 }
