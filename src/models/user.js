@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     address: DataTypes.STRING,
     phoneNumber: DataTypes.STRING,
     gender: DataTypes.STRING,
-    image: DataTypes.STRING,
+    image: {type :DataTypes.BLOB, allowNull:true},
     roleId: DataTypes.STRING,
     positionId: DataTypes.STRING
   }, {

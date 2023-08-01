@@ -220,6 +220,34 @@ let UpdateSpecialtyData = (data) => {
     })
     
 }
+let fiterUserByName = (filter) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let specialty = await db.Specialty.findAll({
+          where: {
+              [Op.or]: [
+                { name: { [Op.like]: `%${filter}%` } }, // Lọc các records có ký tự 'T' trong firstName
+              ]
+            },
+            attributes:{},
+
+          raw: true,
+          nest: true,
+      })
+      if (specialty && specialty.image) {
+          specialty.image= new Buffer(specialty.image, 'base64').toString('binary');
+      }
+      if (!specialty) specialty = { };
+        let a = specialty;
+        resolve({
+          errCode: 0,
+          data: specialty,
+      })
+      } catch (error){
+          console.log("hihi",error)
+      }
+    });
+  };
 module.exports = {
     createSpecialty: createSpecialty,
     getAllSpecialty: getAllSpecialty,
@@ -227,5 +255,6 @@ module.exports = {
     checkName: checkName,
     getAllSpecialties: getAllSpecialties,
     UpdateSpecialtyData: UpdateSpecialtyData,
-    deleteSpecialty: deleteSpecialty
+    deleteSpecialty: deleteSpecialty,
+    fiterUserByName
 }

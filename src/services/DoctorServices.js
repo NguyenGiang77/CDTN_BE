@@ -3,7 +3,7 @@ import _, { includes } from 'lodash';
 require('dotenv').config();
 import EmailServices from '../services/EmailServices'
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
-
+const {Op}  = require("sequelize");
 let getTopDoctor = (limit) => {
     return new Promise( async(resolve, reject) => { 
         try {
@@ -70,7 +70,7 @@ let getAllDoctor = () => {
         }
     })
 }
-let getAllInforDoctor = (limit) => {
+let getAllInforDoctor = () => {
     return new Promise( async(resolve, reject) => { 
         try {
             let users = await db.User.findAll({
@@ -226,6 +226,7 @@ let getDoctorById = (inputId) => {
             else {
                 let data = await db.User.findOne({
                     where: {
+
                         id: inputId
                     },
                     attributes: {
@@ -541,7 +542,51 @@ let sendRemedy  = (data) => {
     }
     })
 }
+let fiterUserByName = (filter) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let users = await db.User.findAll({
+        where: {
+            roleId: 'R2',
+            [Op.or]: [
+              { firstName: { [Op.like]: `%${filter}%` } }, // Lọc các records có ký tự 'T' trong firstName
+              { lastName: { [Op.like]: `%${filter}%` } },  // Lọc các records có ký tự 'T' trong lastName
+            ]
+          },
+          attributes:{exclude: ['password']},
+          include: [
+            { model: db.Allcode, as: 'positionData', attributes: [ 'valueEN', 'valueVN'] },
+            { model: db.Allcode, as: 'genderData', attributes: ['valueEN', 'valueVN'] },
+            { model: db.Allcode, as: 'roleData', attributes: ['valueEN', 'valueVN'] },
+            {
+                model: db.InforDoctor,
+                attributes: [
+                    
+                ],
+                include: [
+                    {model: db.Specialty, as: 'specialtyData', attributes: ['name']}
+                ]
+            }
+        ],
+        raw: true,
+        nest: true,
+    })
+    if (users && users.image) {
+        users.image= new Buffer(users.image, 'base64').toString('binary');
+    }
+    if (!users) users = { };
+      let a = users;
+      resolve({
+        errCode: 0,
+        data: users,
+    })
+    } catch (error){
+        console.log("hihi",error)
+    }
+  });
+};
 module.exports = {
+    fiterUserByName: fiterUserByName,
     getTopDoctor: getTopDoctor,
     getAllDoctor: getAllDoctor,
     postInforDoctor: postInforDoctor,

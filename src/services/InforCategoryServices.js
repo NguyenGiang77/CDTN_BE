@@ -182,10 +182,10 @@ let getAllInforCategory = () => {
     })
 }
 
-let getDetailInforCategoryById = (inputId) => { 
+let getDetailInforCategoryById = (inforCategoryId) => { 
     return new Promise(async(resolve, reject) => { 
         try {
-            if (!inputId) {
+            if (!inforCategoryId) {
                resolve({
                     errCode: 1,
                     errMessage: "Missing parameter required"
@@ -195,7 +195,7 @@ let getDetailInforCategoryById = (inputId) => {
                 
                 let data = await db.InforCategory.findOne({
                     where: {
-                        id: inputId
+                        id: inforCategoryId
                     },
                     attributes: 
                         ['id','inforCategoryHTML', 'inforCategoryMarkdown','description', 'name','image'],

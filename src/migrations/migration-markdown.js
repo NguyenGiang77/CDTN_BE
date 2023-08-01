@@ -23,12 +23,7 @@ module.exports = {
         doctorId: {
             type: Sequelize.INTEGER
             },
-        specialtyId: {
-            type: Sequelize.INTEGER
-            },
-        clinicId: {
-            type: Sequelize.INTEGER
-            },
+
         image: {
             type: Sequelize.STRING
         },

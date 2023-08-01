@@ -78,6 +78,7 @@ let getAllCode = async (req, res) => {
         })
     }
 }
+
 module.exports = {
     HandleLogin: HandleLogin,
     HandleGetAllUsers: HandleGetAllUsers,

@@ -67,6 +67,20 @@ let HandleDeleteClinic = async(req, res) => {
     let message = await ClinicServices.deleteClinic(req.body.id);
     return res.status(200).json(message);
 }
+let filterUserByNameClinic = async (req,res) =>
+{
+    try {
+        let filter = req.params.filterName;
+        let infor = await ClinicServices.filterUserByNameClinic(filter); // query để lấy ra dữ liệu có tham số truyền vào (với Get với Post dùng req.body)
+        return res.status(200).json(infor);
+    } catch (e) { 
+        console.log(e);
+        return res.status(200).json({
+            errCode: -1,
+            errMessage: "Error from the server"
+        })
+    } 
+}
 module.exports = 
 {
 
@@ -75,5 +89,6 @@ module.exports =
     HandleGetAllClinic: HandleGetAllClinic,
     HandleCreateNewClinic:HandleCreateNewClinic,
     HandleEditClinic: HandleEditClinic,
-    HandleDeleteClinic:HandleDeleteClinic
+    HandleDeleteClinic:HandleDeleteClinic,
+    filterUserByNameClinic:filterUserByNameClinic
 }

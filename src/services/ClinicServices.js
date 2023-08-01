@@ -1,5 +1,8 @@
 import db from "../models/index";
 require('dotenv').config();
+const {Op}  = require("sequelize");
+import _, { includes } from 'lodash';
+
 let checkName = (ClinicName) => { 
     return new Promise(async(resolve, reject) => { 
         try {
@@ -158,6 +161,8 @@ let getAllClinic = () => {
                     return item
                 })
             }
+            if (!infor) infor = { };
+
             resolve({
                 errCode: 0,
                 data: infor
@@ -212,6 +217,34 @@ let getDetailClinicById = (inputId) => {
         }
     })
 }
+let filterUserByNameClinic = (filter) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let infor = await db.Clinic.findAll({
+          where: {
+              [Op.or]: [
+                {name: { [Op.like]: `%${filter}%` } },
+                {address: { [Op.like]: `%${filter}%` } },  // Lọc các records có ký tự 'T' trong lastName
+
+              ]
+            },
+            attributes:['name', 'address','image'],
+            
+         
+      })
+      if (infor && infor.image) {
+          infor.image= new Buffer(infor.image, 'base64').toString('binary');
+      }
+      if (!infor) infor = { };
+              resolve({
+          errCode: 0,
+          data: infor,
+      })
+      } catch (error){
+          console.log("hihi",error)
+      }
+    });
+  };
 module.exports = {
     // checkName: checkName,
     getAllClinics: getAllClinics,
@@ -219,5 +252,6 @@ module.exports = {
     deleteClinic:deleteClinic,
     UpdateClinicData:UpdateClinicData,
     getAllClinic: getAllClinic,
-    getDetailClinicById: getDetailClinicById
+    getDetailClinicById: getDetailClinicById,
+    filterUserByNameClinic:filterUserByNameClinic
 }

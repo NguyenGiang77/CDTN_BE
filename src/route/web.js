@@ -37,8 +37,7 @@ let initWebRouter = (app) => {
     router.post('/api/save-infor-doctor', doctorController.postInforDoctor);
     router.get('/api/get-doctor-by-id', doctorController.getDoctorById);
     router.get('/api/all-infor-doctor', doctorController.getAllInforDoctor);
-    router.get('/api/search-doctor', doctorController.SearchDoctor);
-
+    router.get('/api/doctor/filter/:filterName',doctorController.filterUserByName);
     
 
     //lịch khám
@@ -61,6 +60,8 @@ let initWebRouter = (app) => {
     router.get('/api/get-all-specialties', specialtyController.HandleGetAllSpecialty);
     router.put('/api/edit-specialty', specialtyController.HandleEditSpecialty);
     router.delete('/api/delete-specialty', specialtyController.HandleDeleteSpecialty);
+    router.get('/api/specialty/filter/:filterName',specialtyController.filterUserByName);
+
 
 
     // phòng khám
@@ -71,6 +72,8 @@ let initWebRouter = (app) => {
     router.get('/api/get-all-clinics', clinicController.HandleGetAllClinic);
     router.put('/api/edit-clinic', clinicController.HandleEditClinic);
     router.delete('/api/delete-clinic', clinicController.HandleDeleteClinic);
+    router.get('/api/clinic/filter/:filterName',clinicController.filterUserByNameClinic);
+
 
     //gói khám bệnh
     router.get('/api/get-detail-category-by-id', categoryController.getDetailCategoryById); 

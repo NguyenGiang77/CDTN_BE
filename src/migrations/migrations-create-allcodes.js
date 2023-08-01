@@ -10,7 +10,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       keyMap: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique:true
       },
       type: {
         type: Sequelize.STRING
