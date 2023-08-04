@@ -182,10 +182,10 @@ let getAllInforCategory = () => {
     })
 }
 
-let getDetailInforCategoryById = (inforCategoryId) => { 
+let getDetailInforCategoryById = (id) => { 
     return new Promise(async(resolve, reject) => { 
         try {
-            if (!inforCategoryId) {
+            if (!id) {
                resolve({
                     errCode: 1,
                     errMessage: "Missing parameter required"
@@ -195,7 +195,7 @@ let getDetailInforCategoryById = (inforCategoryId) => {
                 
                 let data = await db.InforCategory.findOne({
                     where: {
-                        id: inforCategoryId
+                        id: id
                     },
                     attributes: 
                         ['id','inforCategoryHTML', 'inforCategoryMarkdown','description', 'name','image'],
@@ -357,44 +357,42 @@ let getlisPatientForCategory = (inforCategoryId,date) => {
         }
     })
 }
-let getAllInforDoctor = (limit) => {
+let sendRemedyCategory  = (data) => {    
     return new Promise( async(resolve, reject) => { 
-        try {
-            let users = await db.User.findAll({
-                where: {roleId: 'R2'},
-                order: [['createdAt', 'DESC']],
-                attributes: {
-                    exclude: ['password']
-                },
-                include: [
-                    { model: db.Allcode, as: 'positionData', attributes: [ 'valueEN', 'valueVN'] },
-                    { model: db.Allcode, as: 'genderData', attributes: ['valueEN', 'valueVN'] },
-                    { model: db.Allcode, as: 'roleData', attributes: ['valueEN', 'valueVN'] },
-                    {
-                        model: db.InforDoctor,
-                        attributes: [
-                            
-                        ],
-                        include: [
-                            {model: db.Specialty, as: 'specialtyData', attributes: ['name']}
-                        ]
-                    }
-                ],
-                raw: true,
-                nest: true,
+    try {
+        if (!data.email || !data.inforCategoryId || !data.patientId || !data.timeType) {
+            resolve({
+                errCode: 1,
+                errMessage: 'Missing required parameter'
             })
-            if (users && users.image) {
-                users.image= new Buffer(users.image, 'base64').toString('binary');
-                
-            }
-            if (!users) users = { };
+            
+        }
+        else {
+           // cập nhật status booking
+           let appointment = await db.BookingCategory.findOne({
+            where: {
+                inforCategoryId: data.inforCategoryId,
+                patientId: data.patientId,
+                timeType: data.timeType,
+                statusId: "S2"             
+            },
+            raw: false
+           })
+            if(appointment) {
+                appointment.statusId = "S3";
+                await appointment.save()
+            }   
+           // gửi mail 
+           await EmailServices.sendAttachment(data);
             resolve({
                 errCode: 0,
-                data: users
+                errMessage: 'ok'
             })
-        } catch (e) { 
-            reject(e);
+
         }
+    } catch (e) { 
+        reject(e);
+    }
     })
 }
 module.exports = {
@@ -408,4 +406,5 @@ module.exports = {
     bulkCreateScheduleCategory:bulkCreateScheduleCategory,
     getlisPatientForCategory: getlisPatientForCategory,
     getSchCategoryByDate: getSchCategoryByDate,
+    sendRemedyCategory
 }

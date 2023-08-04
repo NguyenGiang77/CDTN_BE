@@ -130,7 +130,19 @@ let bulkCreateScheduleCategory = async (req, res) => {
          })
      }    
  }
-
+ let sendRemedyCategory = async (req,res) =>
+ {
+     try {
+         let infor = await InforCategoryServices.sendRemedyCategory(req.body); // query để lấy ra dữ liệu có tham số truyền vào (với Get với Post dùng req.body)
+         return res.status(200).json(infor);
+     } catch (e) { 
+         console.log(e);
+         return res.status(200).json({
+             errCode: -1,
+             errMessage: "Error from the server"
+         })
+     } 
+ }
 module.exports = 
 {
 
@@ -144,5 +156,6 @@ module.exports =
     bulkCreateScheduleCategory: bulkCreateScheduleCategory,
     getSchCategoryByDate: getSchCategoryByDate,
     getlisPatientForCategory: getlisPatientForCategory,
-    AllInforCategory: AllInforCategory
+    AllInforCategory: AllInforCategory,
+    sendRemedyCategory
 }

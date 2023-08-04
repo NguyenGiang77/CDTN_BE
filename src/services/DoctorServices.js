@@ -27,18 +27,6 @@ let getTopDoctor = (limit) => {
                             {model: db.Specialty, as: 'specialtyData', attributes: ['name']}
                         ]
                     }
-                    // {
-                    //     model: db.InforDoctor,
-                    //     attributes: {
-                    //         exclude: ['id','doctorId']
-                    //     },
-                    //     include: [
-                    //         { model: db.Allcode, as: 'priceData', attributes: ['valueEN', 'valueVN'] },
-                    //         { model: db.Allcode, as: 'paymentData', attributes: ['valueEN', 'valueVN'] },
-                    //         { model: db.Allcode, as: 'provinceData', attributes: [ 'valueEN', 'valueVN'] },
-                    //         { model: db.Clinic, as: 'clinicData', attributes: ["address"]}
-                    //     ]
-                    // }
                 ],
                 raw: true,
                 nest: true,
@@ -585,6 +573,7 @@ let fiterUserByName = (filter) => {
     }
   });
 };
+
 module.exports = {
     fiterUserByName: fiterUserByName,
     getTopDoctor: getTopDoctor,

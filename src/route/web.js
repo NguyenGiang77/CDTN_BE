@@ -93,7 +93,8 @@ let initWebRouter = (app) => {
     router.get('/api/get-extra-infor-category-by-id', inforCategoryController.getExtraInforCategortById);
     router.post('/api/bulk-create-schedule-category', inforCategoryController.bulkCreateScheduleCategory);  
     router.get('/api/get-schedule-category-by-date', inforCategoryController.getSchCategoryByDate);
-    router.get('/api/get-list-patient-for-category', inforCategoryController.getlisPatientForCategory)
+    router.get('/api/get-list-patient-for-category', inforCategoryController.getlisPatientForCategory);
+    router.post('/api/send-remedy-category', inforCategoryController.sendRemedyCategory);
 
     
     // Bảng allcode

@@ -181,7 +181,7 @@ let getDetailCategoryById = (inputId) => {
                         id: inputId
                     },
                     attributes: 
-                    ['categoryMarkown', 'categoryHTML', 'name','image']
+                    ['categoryMarkown', 'categoryHTML', 'name','image'],
 
                 })
                 if (data)
@@ -189,7 +189,7 @@ let getDetailCategoryById = (inputId) => {
                     let categoryInforCategoryData = [];
                     categoryInforCategoryData = await db.InforCategory.findAll({
                             where: { categoryId: inputId },
-                            attributes: ['categoryId'],
+                            attributes: ['categoryId','id','name','description'],
                         
                         })
                     data.categoryInforCategoryData = categoryInforCategoryData
